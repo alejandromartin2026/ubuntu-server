@@ -9,7 +9,7 @@ El objetivo es crear una guia práctica que vaya desde la instalacion limpia has
 Este repositorio es mi laboratorio activo de estudio. El contenido se irá subiendo y actualizando de forma progresiva a medida que avance en mis practicas. 
 
 
-## contenido del repositorio 
+## Contenido del repositorio 
 
 *   **Instalación Básica:** Configuración del hipervisor, particionamiento y primer inicio.  
 *   **Configuración de red:** Uso de Netplan, IPs estáticas y DNS, Port Forwarding y red nat 
