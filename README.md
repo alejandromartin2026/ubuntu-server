@@ -4,6 +4,11 @@
 
 El objetivo es crear una guia práctica que vaya desde la instalacion limpia hasta puesta en producción con buenas practicas de ciberseguridad.
 
+## Estado del proyecto: En Desarrollo 
+ 
+Este repositorio es mi laboratorio activo de estudio. El contenido se irá subiendo y actualizando de forma progresiva a medida que avance en mis practicas. 
+
+
 ## contenido del repositorio 
 
 *   **Instalación Básica:** Configuración del hipervisor, particionamiento y primer inicio.  
