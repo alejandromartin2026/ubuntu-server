@@ -18,8 +18,9 @@ Este repositorio es mi laboratorio activo de estudio. El contenido se irá subie
 
 ## Estructura del proyecto 
 
-*   `/Docs`: Guia detallada paso a paso, sobre la instalación y hardening 
 *   `/configs`: Archivos de configuracion de muestra 
+*   `/docs`: Guia detallada paso a paso, sobre la instalación y hardening 
+*   `/troubleshooting`: Guia, sobre la resolución de problemas
 
 ## Requisitos del Laboratorio
 
