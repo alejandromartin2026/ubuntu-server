@@ -32,6 +32,31 @@ Una vez iniciada la máquina virtual, el instalador de Ubuntu nos guiará por un
 
 5. **Proxy Address:** Dejamos este campo en blanco
 
+6. **Configuración de Almacenamiento (Guided Storage Configuration):**
+   * Seleccionamos **"Use an entire disk"** para que el sistema utilice los 25 GB que le asignamos en VirtualBox.
+   * **LVM (Logical Volume Manager):** Dejamos activada la opción *Set up this disk as an LVM group*. Esto nos dará la flexibilidad en el futuro de expandir el almacenamiento del servidor sumando nuevos discos sin necesidad de reinstalar el sistema.
+   * **Cifrado (LUKS):** Dejamos desactivada la opción de encriptar el disco para este entorno de pruebas.
 
+   <br>
 
+<img src="img/2.png" alt = "Resumen de Disco" width="500">
 
+   <br>
+
+7. **Storage configuration** Veremos la configuracion general y resumen del sistema, procedemos a continuar y siguiente, nos pregunta si estamos seguros de continuar, volvemos a confirmar
+
+8. **profile configuration** creamos  un usuario, nombre de servidor, y contraseña
+
+9. **Ubuntu Pro:** El instalador nos ofrecerá activar el soporte extendido de Ubuntu Pro. Seleccionamos **"Skip for now"** (Omitir por ahora) para continuar con una instalación estándar y limpia. Si es necesario, este servicio se puede activar por consola más adelante.
+
+10. **Configuración de SSH (SSH Setup):**
+   * Presionamos la barra espaciadora para activar la opción **[X] Install OpenSSH server**. Esto es fundamental, ya que nos permitirá administrar el servidor de forma remota mediante la terminal.
+   * La casilla **[X] Allow SSH password authentication** viene marcada de forma predeterminada. La dejamos así para permitir nuestra primera conexión SSH mediante contraseña, la cual securizaremos más adelante en la sección de Hardening.
+
+ <br>
+
+<img src="img/3.png" alt = "Resumen de SSH " width="500">
+
+   <br>
+
+11. **Servicios Adicionales (Featured Server Snaps):** Dejamos sin marcar nada y le damos siguiente. Luego comezara la instalacion del sistema operativo
