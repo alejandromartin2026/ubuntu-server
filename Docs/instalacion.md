@@ -21,7 +21,6 @@ Para este laboratorio se utilizara en primera instancia **NAT (Network Address T
 
 Una vez iniciada la máquina virtual, el instalador de Ubuntu nos guiará por una serie de menús interactivos. A continuación, se detallan los pasos clave:
 
-Una vez iniciada la máquina virtual, el instalador de Ubuntu nos guiará por una serie de menús interactivos. A continuación, se detallan los pasos clave:
 
 1. **Idioma y Teclado:** Configuro el idioma del instalador. Aunque en entornos de producción los servidores se instalan casi siempre en **Inglés** (para facilitar la lectura de logs y la solución de errores), la distribución del teclado debe coincidir con el teclado físico. En este laboratorio selecciono **Spanish (Latin American)** para mantener la fluidez al escribir comandos con caracteres especiales (`/`, `|`, `$`).
 
@@ -29,4 +28,10 @@ Una vez iniciada la máquina virtual, el instalador de Ubuntu nos guiará por un
 
 3. **Tipo de Instalación:** Elegimos *Ubuntu Server* (la versión base, sin paquetes extra).
 
-4. **Red:** El instalador detectará automáticamente la IP por DHCP gracias al modo NAT de VirtualBox. Dejamos tal cual se asigna por defecto; más adelante se asignará una IP estática.
+4. **Red:** El instalador detectará automáticamente la IP por DHCP gracias al modo NAT de VirtualBox. Dejamos tal cual se asigna por defecto; más adelante se asignará una IP estática, 
+
+5. **Proxy Address:** Dejamos este campo en blanco
+
+
+
+
