@@ -61,6 +61,8 @@ La primera vez que establezcamos la conexión, OpenSSH nos mostrará una adverte
 
 * Introducimos la contraseña de nuestro usuario del servidor y ya habremos tomado el control del servidor de forma remota por SSH.
 
+* En mi caso la primera conexion  despues de ingresar `yes` fallo, reinicie el servidor, volvi a intentar y funciono, automaticamente solicito usuario y contraseña e ingreso.   
+
 <br>
 
 <img src="../docs/img/ssh4.png" alt = "Regla en Conexion establecida en terminal" width="500">
