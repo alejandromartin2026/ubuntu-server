@@ -213,3 +213,43 @@ ssh -i ~/.ssh/id_ed25519_ubuntu_lab bluebeard@10.0.2.4
 <img src="../docs/img/ssh12.png" alt = "conexión con llaves" width="500">
 
    <br> 
+
+##  Automatización de la Conexión (Uso de SSH Config)
+
+Escribir comandos largos que incluyan la ruta de la llave, el usuario y la dirección IP cada vez que se requiere administrar el servidor es ineficiente. Para solucionar esto, configuramos un **alias o atajo permanente** en la máquina cliente mediante el archivo de configuración de SSH.
+
+### Paso 1: Configurar el archivo en el Cliente (Linux Mint)
+
+Abrimos o creamos el archivo de configuración local con el editor Nano:
+```bash
+nano ~/.ssh/config
+```
+
+Dentro del archivo, ingresamos la estructura con los parámetros de nuestro servidor. Es una buena práctica aplicar **indentación (un Tab o 4 espacios)** en las líneas secundarias para indicar que esas propiedades pertenecen al Host declarado arriba:
+
+```text
+Host ubuntulab
+    HostName 10.0.2.4
+    User bluebeard
+    IdentityFile ~/.ssh/id_ed25519_ubuntu_lab
+```
+
+<br>
+
+<img src="../docs/img/ssh13.png" alt = "archivo nano" width="500">
+
+   <br> 
+
+### Paso 2: Conexión Simplificada mediante Alias
+
+Una vez guardado el archivo (`Ctrl + O` y `Ctrl + X`), el sistema mapea los parámetros automáticamente. Ahora es posible conectarse al entorno de laboratorio utilizando únicamente el alias definido, resolviendo el usuario, la IP y la llave criptográfica por detrás:
+
+```bash
+ssh ubuntulab
+```
+
+<br>
+
+<img src="../docs/img/ssh14.png" alt = "log con automatización" width="500">
+
+   <br> 
