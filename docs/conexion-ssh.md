@@ -137,8 +137,79 @@ Con la conectividad confirmada, ejecuta el comando de conexión SSH desde tu Lin
 ```bash
 ssh tu_usuario_servidor@<IP_DEL_SERVIDOR>
 ```
-<br>
+  <br>
 
 <img src="../docs/img/ssh8.png" alt = "conexión" width="500">
 
    <br>
+
+
+ ## Hardening: Autenticación Avanzada mediante Llaves SSH
+
+Para robustecer la seguridad del servidor y eliminar la necesidad de autenticarse mediante contraseñas tradicionales (vulnerables a ataques de fuerza bruta), se procedió a configurar un esquema de autenticación basado en **llaves criptográficas (pública/privada)** utilizando el algoritmo moderno **ED25519**.
+
+### Paso 1: Generación de Llaves Personalizadas en la Máquina Cliente (Linux Mint)
+
+Dado que la máquina cliente ya cuenta con un par de llaves asignadas para interactuar con **GitHub** (`id_ed25519`), es una buena práctica de seguridad y administración generar una llave exclusiva con un **nombre personalizado** para evitar sobreescribir las credenciales existentes.
+
+Desde la terminal del cliente (Linux Mint), ejecutamos:
+```bash
+ssh-keygen -t ed25519 -f ~/.ssh/id_ed25519_ubuntu_lab -C "lab-mint"
+```
+
+* *Nota 1: El parámetro `-f` especifica la ruta y el nombre del nuevo archivo para que no colisione con el de GitHub.*
+* *Nota 2: El parámetro `-C` añade un comentario descriptivo al final de la llave pública para identificar su origen en el servidor.*
+* *Nota 3: En el asistente de la terminal, se presionó **Enter** en todas las solicitudes para dejar la clave (passphrase) en blanco, permitiendo un acceso automatizado.*
+
+<br>
+
+<img src="../docs/img/ssh9.png" alt = "generacion de llaves" width="500">
+
+   <br>
+
+### Paso 2: Transferencia del "Candado" (Llave Pública) al Servidor
+
+Para inyectar de forma segura nuestra nueva llave pública en el servidor Ubuntu, utilizamos el comando automatizado `ssh-copy-id`. Al contar con múltiples llaves en nuestro directorio local, es obligatorio usar el parámetro `-i` (Identity) para indicarle explícitamente al sistema cuál archivo transferir:
+
+```bash
+ssh-copy-id -i ~/.ssh/id_ed25519_ubuntu_lab bluebeard@10.0.2.4
+```
+*Se solicitará la contraseña tradicional del usuario del servidor por última vez para autorizar la instalación del componente público.*
+
+<br>
+
+<img src="../docs/img/ssh10.png" alt = "copia" width="500">
+
+   <br>
+
+### Paso 3: Auditoría y Verificación en el Servidor (Mentalidad de Ciberseguridad)
+
+Para validar que el servidor almacenó de forma íntegra y correcta el "candado" de nuestra máquina de laboratorio (y no otra llave por error), realizamos una verificación en dos pasos:
+
+ **Lectura directa del almacén de llaves autorizadas (en el servidor):**
+   ```bash
+   cat ~/.ssh/authorized_keys
+   ```
+   *Se constató que la línea finalizaba con la etiqueta `lab-mint`, confirmando la procedencia exacta de la llave.*
+
+<br>
+
+<img src="../docs/img/ssh11.png" alt = "verificacion" width="500">
+
+   <br>   
+
+
+
+### Paso 4: Conexión SSH Directa y Automatizada
+
+Con la arquitectura validada, la conexión SSH hacia el servidor se realiza apuntando de forma explícita a nuestra llave privada asignada, logrando iniciar sesión de forma instantánea sin requerir contraseñas:
+
+```bash
+ssh -i ~/.ssh/id_ed25519_ubuntu_lab bluebeard@10.0.2.4
+```  
+
+<br>
+
+<img src="../docs/img/ssh12.png" alt = "conexión con llaves" width="500">
+
+   <br> 
