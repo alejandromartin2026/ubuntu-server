@@ -68,3 +68,10 @@ La primera vez que establezcamos la conexión, OpenSSH nos mostrará una adverte
 <img src="../docs/img/ssh4.png" alt = "Regla en Conexion establecida en terminal" width="500">
 
    <br>
+
+
+## Configuración de VirtualBox: Creación de una Red NAT
+
+Para permitir la comunicación entre dos o más máquinas virtuales, procedemos a crear una **Red NAT** en VirtualBox. 
+
+Por defecto, el modo **NAT** estándar aísla a cada máquina virtual en su propia subred, impidiendo que se conecten entre sí. En cambio, una **Red NAT** funciona como un **switch (conmutador) virtual compartido**: agrupa a ambos dispositivos dentro de la misma subred interna, permitiendo que se comuniquen entre sí (por ejemplo, para administración SSH o auditorías) mientras mantienen su acceso a Internet de forma segura y aislada de la red física local.
