@@ -75,3 +75,70 @@ La primera vez que establezcamos la conexión, OpenSSH nos mostrará una adverte
 Para permitir la comunicación entre dos o más máquinas virtuales, procedemos a crear una **Red NAT** en VirtualBox. 
 
 Por defecto, el modo **NAT** estándar aísla a cada máquina virtual en su propia subred, impidiendo que se conecten entre sí. En cambio, una **Red NAT** funciona como un **switch (conmutador) virtual compartido**: agrupa a ambos dispositivos dentro de la misma subred interna, permitiendo que se comuniquen entre sí (por ejemplo, para administración SSH o auditorías) mientras mantienen su acceso a Internet de forma segura y aislada de la red física local.
+
+### Paso 1: Creación de la Red NAT en el Hipervisor
+
+Estando en el panel general de VirtualBox, nos dirigimos al menú superior y hacemos clic en `Archivo` > `Herramientas` y seleccionamos la opción `Red`.
+
+Una vez adentro del Administrador de Redes de VirtualBox, veremos tres pestañas. Debemos dirigirnos a la pestaña **Redes NAT** y luego hacer clic en el botón superior **Crear (+)**. Automáticamente se generará una red con un nombre por defecto, tal como se muestra en la siguiente imagen:
+
+<br>
+
+<img src="../docs/img/ssh5.png" alt = "Creación Red NAT" width="500">
+
+   <br>
+
+### Paso 2: Asociar las Máquinas Virtuales a la Red NAT
+
+Para que los dispositivos puedan comunicarse entre sí, debemos cambiar la configuración de red tanto en la máquina cliente (**Linux Mint**) como en el servidor (**Ubuntu Server**):
+
+1. Seleccionamos la máquina virtual en el panel de VirtualBox y hacemos clic en **Configuración** (ícono de engranaje).
+2. En el menú lateral izquierdo, nos dirigimos al apartado de **Red**.
+3. En la pestaña **Adaptador 1**, nos aseguramos de que la casilla *Habilitar adaptador de red* esté marcada.
+4. En el desplegable *Conectar a*, cambiamos el modo de **NAT** a **Red NAT**.
+5. En el campo *Nombre*, seleccionamos la red que creamos previamente (`NatNetwork`).
+
+*Nota: Realizar este mismo procedimiento en ambas máquinas virtuales para introducirlas en la misma subred.*
+
+
+<br>
+
+<img src="../docs/img/ssh6.png" alt = "Cambio de red en dispositivos" width="500">
+
+   <br>
+
+## Conexión SSH Directa mediante Red NAT
+
+Una vez que ambas máquinas virtuales están encendidas dentro de la misma **Red NAT**, ya no es necesario realizar un reenvío de puertos desde el host. La conexión se realiza de forma directa entre los sistemas virtuales.
+
+### Paso 1: Identificar la IP del Servidor
+En la consola de tu **Ubuntu Server**, ejecuta el siguiente comando para conocer su dirección IP privada interna:
+```bash
+ip a
+```
+*(Debes buscar la IP que se encuentra en el rango `10.0.2.X`)*
+
+### Paso 2: Verificar la conectividad (Ping)
+Desde la terminal de tu máquina cliente (**Linux Mint**), verifica que ambos sistemas se comuniquen correctamente ejecutando un ping hacia la IP del servidor (limitado a 4 paquetes con el parámetro `-c`):
+
+```bash
+ping -c 4 <IP_DEL_SERVIDOR>
+```
+<br>
+
+<img src="../docs/img/ssh7.png" alt = "Prueba de conectividad" width="500">
+
+   <br>
+
+
+### Paso 3: Establecer la conexión SSH
+Con la conectividad confirmada, ejecuta el comando de conexión SSH desde tu Linux Mint:
+
+```bash
+ssh tu_usuario_servidor@<IP_DEL_SERVIDOR>
+```
+<br>
+
+<img src="../docs/img/ssh8.png" alt = "conexión" width="500">
+
+   <br>
