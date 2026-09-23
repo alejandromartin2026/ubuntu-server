@@ -236,7 +236,7 @@ Host ubuntulab
 
 <br>
 
-<img src="../docs/img/ssh13.png" alt = "archivo nano" width="500">
+<img src="../docs/img/ssh13.png" alt = "archivo nano para automatizar" width="500">
 
    <br> 
 
@@ -253,3 +253,97 @@ ssh ubuntulab
 <img src="../docs/img/ssh14.png" alt = "log con automatización" width="500">
 
    <br> 
+
+
+  
+## Hardening Avanzado: Restricción de Contraseñas y Cambio de Puerto
+
+Para llevar el servidor a un estándar de seguridad de nivel de producción, se aplicaron directivas estrictas de endurecimiento (*hardening*) modificando el archivo de configuración del demonio de SSH. El objetivo es bloquear cualquier intento de ataque por fuerza bruta automatizado.
+
+### Paso 1: Configurar las directivas de seguridad en el Servidor
+
+Accedemos al archivo de configuración del sistema con permisos de superusuario:
+```bash
+sudo nano /etc/ssh/sshd_config
+```
+
+ <br>
+
+<img src="../docs/img/ssh15.png" alt = "Comando para ingresar a configuracion" width="500">
+
+   <br> 
+
+Modificamos y descomentamos las siguientes líneas con sus valores correspondientes:
+* **Port 2232:** Cambiamos el puerto por defecto (22) por un puerto alto no estándar para mitigar escaneos masivos de red.
+* **PermitRootLogin no:** Prohibimos por completo que el usuario administrador supremo `root` inicie sesión de forma remota por SSH.
+* **MaxAuthTries 3:** Reducimos a la mitad los intentos permitidos por sesión para forzar la desconexión rápida ante fallas.
+* **PasswordAuthentication no:** El cerrojo principal. Deshabilitamos el uso de contraseñas tradicionales, obligando al uso exclusivo de llaves criptográficas.
+* **PermitEmptyPasswords no:** Capa de seguridad secundaria para bloquear el acceso a cualquier cuenta local sin contraseña.
+
+
+<br>
+
+<img src="../docs/img/ssh16.png" alt = "Modificación de puerto" width="250">
+<img src="../docs/img/ssh17.png" alt = "Modificación de intentos de inicio y denegacion de acceso a loginRoot" width="250">
+<img src="../docs/img/ssh18.png" alt = "Desactivación de login ssh por contraseña y no permitir usuarios sin contraseña" width="250">
+
+   <br>
+
+### Paso 2: Aplicar Cambios y Resolución de Socket Activation (Systemd)
+
+En las versiones modernas de Ubuntu (24.04+), el servicio SSH utiliza *Socket Activation* (`ssh.socket`). Por ende, para que el sistema operativo migre el puerto de escucha eficientemente, debemos apagar el socket y encender el servicio tradicional ejecutando en orden los siguientes comandos:
+
+```bash
+sudo systemctl stop ssh.socket
+sudo systemctl disable ssh.socket
+sudo systemctl enable --now ssh.service
+sudo systemctl restart ssh
+```
+
+<br>
+
+<img src="../docs/img/ssh21.png" alt = "Comandos de systemctl para migrar el servicio SSH al modo tradicional" width="500">
+
+   <br>
+
+Para auditar y validar matemáticamente que el servidor modificó el puerto de escucha, ejecutamos:
+```bash
+sudo ss -tlnp | grep ssh
+```
+*Resultado esperado en consola: Escucha activa sobre el puerto `:2232`.*
+
+
+<br>
+
+<img src="../docs/img/ssh22.png" alt = "Verificación de puerto en escucha" width="500">
+
+   <br>
+
+
+### Paso 3: Actualización del Alias en el Cliente (Linux Mint)
+
+Para poder seguir utilizando nuestro atajo simplificado con las nuevas reglas, editamos el archivo local `nano ~/.ssh/config` e incorporamos la directiva del puerto:
+
+```text
+Host ubuntulab
+    HostName 10.0.2.4
+    User bluebeard
+    IdentityFile ~/.ssh/id_ed25519_ubuntu_lab
+    Port 2232
+```
+
+
+<br>
+
+<img src="../docs/img/ssh20.png" alt = "Modificacion de puerto en archivo automatizado de ingreso" width="500">
+
+   <br>
+
+### Paso 4: Prueba de Conectividad Final
+
+Abrimos una nueva terminal limpia en nuestra máquina cliente y realizamos la prueba utilizando únicamente el alias:
+
+```bash
+ssh ubuntulab
+```
+*El servidor procesa el protocolo de autenticación por llave simétrica de forma transparente a través del puerto 2232, otorgando acceso inmediato sin solicitar contraseñas.*
