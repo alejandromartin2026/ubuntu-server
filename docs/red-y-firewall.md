@@ -63,3 +63,46 @@ A continuacion ejecutamos el comando `sudo netplan apply`, para finalizar verifi
 <img src="../docs/img/netplan4.png" alt = "Configuracion" width="700">
 
    <br>   
+
+
+## Configuración de Firewall (UFW) 
+
+Para configurar nuestro firewall primero debemos verificar el estado. ejecutamos el comando : `sudo ufw status` siguiente veremos que su estado es inactivo.
+
+### Politicas por defecto
+
+ Ante de activar nuestro Firewall definimos primero politicas estandar de ciberseguridad básica mediante los siguientes comandos, para denegar todo ingreso y permitir salida a internet :
+
+  ```bash
+ sudo ufw default deny incoming
+ ```
+
+ ```bash
+ sudo ufw default allow outgoing 
+ ```
+
+ ### Aplicación de regla
+
+ En nuestro laboratorio cambie por defecto el puerto ssh del 22 al  2232, si activo el Firewall en este momento me expulsaria de la conexion ssh, debido a los dos comando anteriores, antes de encender el Firewall debemos abrir el puerto a la subred mediante el comando :
+
+ ```bash
+ sudo ufw allow from 10.0.2.0/24 to any port 2232 proto tcp 
+ ``` 
+
+ Finalmente encendemos nuestro Firewall:
+ 
+ ```bash
+ sudo ufw enable  
+ ``` 
+
+ <br>
+
+<img src="../docs/img/ufw1.png" alt = "Comandos de configuracion" width="700">
+
+   <br>  
+
+ <br>
+
+<img src="../docs/img/ufw2.png" alt = "Estado del Firewall" width="700">
+
+   <br>    
