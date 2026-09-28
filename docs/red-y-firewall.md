@@ -67,7 +67,7 @@ A continuacion ejecutamos el comando `sudo netplan apply`, para finalizar verifi
 
 ## Configuración de Firewall (UFW) 
 
-Para configurar nuestro firewall primero debemos verificar el estado. ejecutamos el comando : `sudo ufw status` siguiente veremos que su estado es inactivo.
+Para configurar nuestro firewall primero debemos verificar el estado, ejecutamos el comando : `sudo ufw status` siguiente veremos que su estado es inactivo.
 
 ### Politicas por defecto
 
