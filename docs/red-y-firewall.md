@@ -65,7 +65,7 @@ A continuacion ejecutamos el comando `sudo netplan apply`, para finalizar verifi
    <br>   
 
 
-## Configuración de Firewall (UFW) 
+## 2 Configuración de Firewall (UFW) 
 
 Para configurar nuestro firewall primero debemos verificar el estado, ejecutamos el comando : `sudo ufw status` siguiente veremos que su estado es inactivo.
 
@@ -106,3 +106,63 @@ Para configurar nuestro firewall primero debemos verificar el estado, ejecutamos
 <img src="../docs/img/ufw2.png" alt = "Estado del Firewall" width="700">
 
    <br>    
+
+## 3 Configuración e instalacion de Fail2ban
+
+Aplicar seguridad por capas es fundamental, si bien ya tenemos configurado nuestro **Firewall** ufw que solo permite conexion desde nuestra sub-red, ademas tenemos configurado ssh para conexion por llaves criptograficas y deshabilitado el inicio por contraseña, agregar Fail2ban es fundamental por los siguientes motivos:
+
+ * **1** Detener el consumo de recursos **CPU** y **RAM** aunque un atacante no pueda ingresar sin tener la llave criptografica, genera consulta y consumo de recursos.
+
+  * **2**   Evitar saturar el servidor por saturacion de peticiones **DOS**. En un tercer intento Fail2ban le ordena al Firewall bloquear la IP.
+  
+  * **3** Evitar spam masivo, evitar que nuestro registro se sature de logs fallidos.
+
+
+
+### Paso 1: Instalación del Servicio
+
+Actualizamos los repositorios del sistema e instalamos el paquete nativo de Fail2ban:
+```bash
+sudo apt update && sudo apt install fail2ban -y
+```
+
+Comprobamos que el servicio se encuentre activo y corriendo en la memoria del servidor:
+```bash
+sudo systemctl status fail2ban
+```
+
+### Paso 2: Configuración de la Cárcel Personalizada (sshd)
+
+Bajo las buenas prácticas de administración, nunca se debe modificar el archivo original `jail.conf`, ya que podría sobreescribirse en futuras actualizaciones del programa. En su lugar, creamos un archivo de configuración local:
+
+```bash
+sudo nano /etc/fail2ban/jail.local
+```
+
+<br>
+
+<img src="../docs/img/fail2ban1.png" alt = "Creamos archivo de configuracion" width="700">
+
+   <br> 
+
+
+Guardamos los cambios (`Ctrl + O`, `Enter` y `Ctrl + X`) y reiniciamos el servicio para aplicar la nueva configuración:
+
+```bash
+sudo systemctl restart fail2ban
+```
+
+### Paso 3: Auditoría y Monitoreo del Estado
+
+Para verificar matemáticamente que Fail2ban se encuentra patrullando activamente la celda de SSH y comprobar si existen IPs bloqueadas en tiempo real, ejecutamos el cliente de control:
+
+```bash
+sudo fail2ban-client status sshd
+```
+<br>
+
+<img src="../docs/img/fail2ban2.png" alt = "Verificación de estado del servicio" width="700">
+
+   <br> 
+
+   
