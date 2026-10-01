@@ -12,7 +12,8 @@ Este repositorio es mi laboratorio activo de estudio. El contenido se irá subie
 ## Contenido del repositorio 
 
 *   **Instalación Básica:** Configuración del hipervisor, particionamiento y primer inicio.  
-*   **Configuración de red:** Uso de Netplan, IPs estáticas y DNS, Port Forwarding y red nat 
+*   **Configuración de red:** Uso de Netplan, IPs estáticas y DNS, Port Forwarding y red nat
+*   **Gestión de accesos:** Control de usuarios, privilegios con `sudo`, máscaras de permisos (`Umask`) y auditoría de seguridad.
 *   **Servicios Esenciales** Despliegue de servidores web (Nginx/Apache) y virtualizacion con Docker.
 *   **Hardening (Seguridad):** Desactivar acceso root por SSH y configurar el servicio, cambio de puerto de conexion SSH, configuracion de Firewall (UFW), llaves SSH, y Fail2ban  
 
