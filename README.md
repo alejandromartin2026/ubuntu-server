@@ -15,15 +15,20 @@ Este repositorio es mi laboratorio activo de estudio. El contenido se irá subie
 *   **Configuración de red:** Uso de Netplan, IPs estáticas y DNS, Port Forwarding y red nat
 *   **Gestión de accesos:** Control de usuarios, privilegios con `sudo`, máscaras de permisos (`Umask`) y auditoría de seguridad.
 *   **Servicios Esenciales** Despliegue de servidores web (Nginx/Apache) y virtualizacion con Docker.
-*   **Hardening (Seguridad):** Desactivar acceso root por SSH y configurar el servicio, cambio de puerto de conexion SSH, configuracion de Firewall (UFW), llaves SSH, y Fail2ban  
+*   **Hardening (Seguridad):** Desactivar acceso root por SSH y configurar el servicio, cambio de puerto de conexion SSH, configuracion de Firewall (UFW), llaves SSH, y fail2ban  
 
 ## Estructura del proyecto 
 
-*   `/configs`: Archivos de configuracion de muestra 
-*   `/docs`: Guia detallada paso a paso, sobre la instalación y hardening 
-*   `/troubleshooting`: Guia, sobre la resolución de problemas
+*   `/configs`: Archivos de configuración de muestra.
+*   `/docs`: Guía detallada paso a paso.
+    *   `01-instalacion.md` ✅ Completo
+    *   `02-conexion-ssh.md` ✅ Completo 
+    *   `03-netplan-firewall-fail2ban.md` ✅ Completo
+    *   `04-usuarios-y-permisos.md` 🛠️ En curso
+*   `/troubleshooting`: Guía sobre la resolución de problemas.
+    *   `01-recuperacion-de-contraseña-grub.md`
 
 ## Requisitos del Laboratorio
-
+      
 *   **OS**: Ubuntu Server LTS 
 *   **Entorno**: VirtualBox
