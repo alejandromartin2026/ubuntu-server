@@ -46,3 +46,34 @@ admin-01 ALL=(ALL:ALL) ALL
 <br>
 
 Luego `ctrl o` para guardar y `ctrl x` para salir. Nuestro usuario admin-01 ya tiene permiso para utilizar el sudo en sus comandos. 
+
+Por medio del comando `su admin-01` podemos ingresar a nuestro usuario, en la imagen de mi lab pruebo un comando simple de actualización de sistema para verficar que todo funciona de manera correcta.
+
+<br>
+<img src="../docs/img/usuario3.png" alt="Configuración de visudo para admin-01" width="700">
+<br>
+
+## 2. Gestión de Permisos sobre el Nuevo Usuario
+
+Una vez creado el usuario, es fundamental comprender cómo administra Linux el acceso a los archivos y carpetas bajo su modelo de seguridad de tres capas (Dueño, Grupo, Otros).
+
+###  Estructura de los Permisos en Linux
+Cuando ejecutamos un comando de listado detallado (`ls -l`), el sistema nos devuelve una cadena de caracteres a la izquierda que define el tipo de elemento y sus privilegios.
+
+#### 1. Primer carácter (Tipo de elemento):
+*   **`-` (Guion):** Identifica que el elemento es un **archivo común** (un texto, una imagen, un script).
+*   **`d`:** Identifica que es un **directorio** o carpeta.
+*   **`l`:** Identifica que es un **enlace simbólico** (*symlink*), actuando como un acceso directo.
+
+#### 2. Los 9 caracteres siguientes (Bloques de permisos):
+Se dividen en tres conjuntos de tres letras (`r` = lectura, `w` = escritura, `x` = ejecución):
+*   **Primeros 3:** Permisos para el **Dueño** (User).
+*   **Segundos 3:** Permisos para el **Grupo** (Group).
+*   **Últimos 3:** Permisos para **Otros** (Others - cualquier usuario fuera de los anteriores).
+
+#### Ejemplo Teórico: El caso `761`
+Si tenemos un archivo con la estructura `-rwxrw---x`, se traduce al sistema numérico (octal) sumando los valores asignados a cada propiedad: **Lectura (4), Escritura (2), Ejecución (1)**.
+
+*   **Dueño (`rwx`):** 4 + 2 + 1 = **7** (Tiene control total).
+*   **Grupo (`rw-`):** 4 + 2 + 0 = **6** (Puede leer y modificar, pero no ejecutar).
+*   **Otros (`--x`):** 0 + 0 + 1 = **1** (Solo puede ejecutar el archivo, no leerlo ni editarlo).
