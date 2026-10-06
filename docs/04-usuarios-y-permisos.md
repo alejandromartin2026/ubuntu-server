@@ -77,3 +77,51 @@ Si tenemos un archivo con la estructura `-rwxrw---x`, se traduce al sistema num�
 *   **Dueño (`rwx`):** 4 + 2 + 1 = **7** (Tiene control total).
 *   **Grupo (`rw-`):** 4 + 2 + 0 = **6** (Puede leer y modificar, pero no ejecutar).
 *   **Otros (`--x`):** 0 + 0 + 1 = **1** (Solo puede ejecutar el archivo, no leerlo ni editarlo).
+
+
+
+###  Alta de Conexión SSH para el Nuevo Administrador
+
+Una vez creado el nuevo usuario administrador y otorgados sus permisos en `visudo`, el siguiente paso crítico es permitir su acceso remoto mediante **SSH**. Si bien este laboratorio ya cuenta con un apartado general de SSH, considero una excelente práctica documentar cómo se gestionaría este proceso en un entorno corporativo real bajo estándares estrictos de seguridad.
+
+En este escenario simulado, no compartiremos contraseñas. Le solicitaremos al nuevo usuario (**admin-01**) que genere su propio par de claves criptográficas (llave pública y privada) en su dispositivo local mediante el siguiente comando:
+
+```bash
+ssh-keygen -t ed25519 -f ~/.ssh/id_admin-01 -C "admin-01-lab"
+```
+
+>**Nota de Infraestructura del Lab:** Para simular este comportamiento en nuestro entorno, utilizamos el mismo host físico (Linux Mint) desde donde opera el usuario principal **bluebeard**, actuando en la imaginación como si fuera la computadora externa del nuevo colega. Gracias a los parámetros `-f` (indica el nombre único del archivo) y `-C` (comentario identificatorio), podemos almacenar múltiples llaves de forma ordenada en un mismo cliente SSH sin pisar ni romper nuestras llaves personales previas de GitHub o del propio servidor.
+
+<br>
+<img src="../docs/img/usuario4.png" alt="Creación de llaves SSH para admin-01" width="700">
+<br>
+
+###  2. Inyección de la Llave Pública en el Servidor
+
+Para el siguiente paso, el usuario administrador debe transferir de manera segura su "candado" (llave pública) hacia el servidor. Conociendo de antemano la dirección IP estática y el puerto personalizado del servicio SSH de nuestro entorno de VirtualBox, ejecutamos el comando nativo `ssh-copy-id` especificando la ruta exacta de la identidad:
+
+```bash
+ssh-copy-id -p 2232 -i ~/.ssh/id_admin-01.pub admin-01@10.0.2.4
+```
+
+<br>
+<img src="../docs/img/usuario5.png" alt="Copia de llave pública en el servidor" width="700">
+<br>
+
+Como se observa en el output de la terminal, el servidor solicita la credencial local del usuario por única vez, procesa la firma criptográfica y confirma la inyección exitosa (`Number of key(s) added: 1`).
+
+###  3. Acceso Directo Seguro
+
+Con la llave pública ya registrada en el archivo `authorized_keys` del servidor, procedemos a realizar la conexión remota desde el cliente. Indicamos de forma explícita qué llave privada utilizar para la autenticación a través del parámetro `-i`:
+
+```bash
+ssh -p 2232 -i ~/.ssh/id_admin-01 admin-01@10.0.2.4
+```
+
+<br>
+<img src="../docs/img/usuario6.png" alt="Login exitoso por llave SSH sin contraseña" width="700">
+<br>
+
+La conexión se establece de forma instantánea. El servidor valida el par de claves y nos otorga **acceso directo a la shell de administración sin pedir contraseñas**, logrando un entorno robusto, eficiente y completamente protegido contra vectores de ataque de fuerza bruta por diccionario.
+
+
