@@ -176,3 +176,58 @@ sudo passwd dev-01
 sudo passwd dev-02
 sudo passwd dev-03
 ```
+<br>
+<img src="../docs/img/usuario9.png" alt="contraseñas de usuarios" width="500">
+<br>
+
+## Configuración del Espacio Compartido en Directorio de Servicios (`/srv`)
+
+Siguiendo el estándar de jerarquía de archivos de Linux (**FHS**), utilizaremos el directorio `/srv` (destinado a los datos de servicios y proyectos que proporciona el sistema) para centralizar el espacio de trabajo del equipo. Evitamos usar `/home` para garantizar una separación estricta entre los datos privados de los usuarios y los activos de la organización.
+
+### Creación del Directorio de Trabajo
+
+Creamos la carpeta donde el equipo de desarrollo colaborará de forma centralizada:
+
+```bash
+sudo mkdir -p /srv/desarrollo
+```
+
+### Configuración del Grupo Propietario
+
+Por defecto, la carpeta recién creada pertenece a `root:root`. Para permitir que nuestro nuevo grupo tenga acceso, transferimos la propiedad del grupo a `desarrollo` manteniendo a `root` como dueño del archivo:
+
+ *   **`chown`**: Es la herramienta nativa para modificar los propietarios de un elemento en el sistema de archivos.
+ *   **El uso de los dos puntos (`:desarrollo`)**: Esta es una buena práctica clave. Al anteponer los dos puntos al nombre del grupo y omitir el usuario, le indicamos al sistema que **mantenga a `root` como usuario dueño original**, pero que transfiera de forma exclusiva el **grupo propietario** a `desarrollo`.
+ *   **`/srv/desarrollo`**: Especifica el objetivo o la ruta absoluta sobre la cual se aplicará la directiva.
+
+```bash
+sudo chown :desarrollo /srv/desarrollo
+```
+
+<br>
+<img src="../docs/img/usuario10.png" alt="Creación de carpeta en srv y asignación de grupo" width="700">
+<br>
+
+## 5. Hardening de Permisos con Bit Especial (SGID)
+
+Si dejamos el directorio compartiendo sus privilegios por defecto (`drwxr-xr-x`), los desarrolladores se toparán con dos problemas graves de seguridad y usabilidad: no podrán escribir en la carpeta (permiso denegado) y cualquier otro usuario ajeno al proyecto podrá leer el código fuente.
+
+Para solucionar esto aplicando el principio de menor privilegio, implementamos el bit especial **SGID (Set Group ID)** mediante la nomenclatura octal de cuatro dígitos `2770`.
+
+### Aplicación del Hardening
+
+Ejecutamos el cambio de privilegios sobre la carpeta compartida:
+
+```bash
+sudo chmod 2770 /srv/desarrollo
+```
+
+**Desglose técnico del valor `2770`:**
+*   **`2` (Bit Especial SGID):** Garantiza que cualquier archivo creado dentro de este directorio herede automáticamente el grupo propietario (`desarrollo`), permitiendo el trabajo colaborativo fluido sin importar qué usuario cree el archivo.
+*   **Primer `7` (Dueño / Root):** Mantiene el control total para el administrador del sistema (`rwx`).
+*   **Segundo `7` (Grupo / Desarrollo):** Otorga permisos de lectura, escritura y ejecución (`rwx`) para que el equipo de desarrollo pueda trabajar.
+*   **El `0` Final (Otros / Resto del mundo):** Aplica una restricción absoluta (`---`). Ningún usuario ajeno al grupo desarrollo podrá ingresar, leer ni modificar el contenido de este espacio.
+
+<br>
+<img src="../docs/img/usuario11.png" alt="Aplicación de chmod 2770 y verificación del SGID" width="700">
+<br>
