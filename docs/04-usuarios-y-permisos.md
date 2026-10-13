@@ -125,3 +125,54 @@ ssh -p 2232 -i ~/.ssh/id_admin-01 admin-01@10.0.2.4
 La conexión se establece de forma instantánea. El servidor valida el par de claves y nos otorga **acceso directo a la shell de administración sin pedir contraseñas**, logrando un entorno robusto, eficiente y completamente protegido contra vectores de ataque de fuerza bruta por diccionario.
 
 
+
+## Creación de Grupo y Usuarios con Comando `useradd`
+
+Primero se creará el grupo de desarrollo y luego se darán de alta 3 usuarios nuevos (**dev-01**, **dev-02** y **dev-03**) utilizando el comando nativo de bajo nivel. Al ejecutar este proceso, los incorporaremos directamente al grupo creado previamente.
+
+### Creación del Grupo
+
+Utilizamos el comando `groupadd` para generar el nuevo contenedor de seguridad en el sistema:
+
+```bash
+sudo groupadd desarrollo
+```
+
+### Creación de Usuarios e Incorporación al Grupo
+
+Para automatizar el despliegue de forma eficiente, utilizamos parámetros avanzados en una sola línea de comandos para cada usuario:
+
+```bash
+sudo useradd -m -s /bin/bash -G desarrollo dev-01
+sudo useradd -m -s /bin/bash -G desarrollo dev-02
+sudo useradd -m -s /bin/bash -G desarrollo dev-03
+```
+
+**Desglose de parámetros utilizados:**
+*   **`-m`:** Fuerza al sistema a crear el directorio personal en `/home/usuario` (copiando los archivos base de `/etc/skel`).
+*   **`-s /bin/bash`:** Define explícitamente la shell Bash como entorno de comandos (evitando que asigne `/bin/sh` por defecto, la cual es muy limitada y carece de autocompletado).
+*   **`-G desarrollo`:** Añade al usuario al grupo secundario `desarrollo` en el mismo momento de su nacimiento.
+
+<br>
+<img src="../docs/img/usuario7.png" alt="Creación de usuarios con useradd" width="700">
+<br>
+
+Para confirmar que los directorios personales se configuraron de forma correcta bajo el estándar del sistema, listamos el contenido de `/home`:
+
+```bash
+ls -la /home
+```
+
+<br>
+<img src="../docs/img/usuario8.png" alt="Verificación de creación correcta en home" width="700">
+<br>
+
+### Asignación de Contraseñas (Inicialización de Cuentas)
+
+Al ser creados con la herramienta de bajo nivel `useradd`, los usuarios nacen en estado "bloqueado" y sin una clave asignada. Para habilitar sus accesos, procedemos a establecer sus credenciales individuales mediante el comando `passwd`:
+
+```bash
+sudo passwd dev-01
+sudo passwd dev-02
+sudo passwd dev-03
+```
