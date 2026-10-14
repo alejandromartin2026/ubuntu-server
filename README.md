@@ -27,6 +27,7 @@ Este repositorio es mi laboratorio activo de estudio. El contenido se irá subie
     *   `04-usuarios-y-permisos.md` 🛠️ En curso
 *   `/troubleshooting`: Guía sobre la resolución de problemas.
     *   `01-recuperacion-de-contraseña-grub.md`
+    *   `02-autenticación-ssh-contraseña-resiual.md`
 
 ## Requisitos del Laboratorio
       
