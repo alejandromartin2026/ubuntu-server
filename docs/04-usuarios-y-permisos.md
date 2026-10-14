@@ -231,3 +231,45 @@ sudo chmod 2770 /srv/desarrollo
 <br>
 <img src="../docs/img/usuario11.png" alt="Aplicación de chmod 2770 y verificación del SGID" width="700">
 <br>
+
+##  Verificación Práctica del Entorno Colaborativo
+
+Para comprobar el correcto funcionamiento del bit SGID y garantizar que los desarrolladores puedan cooperar sin necesidad de elevar privilegios con `sudo`, simulamos el flujo de trabajo real entre dos usuarios del grupo.
+
+### Paso 1: Creación de archivo base con `dev-01`
+
+Iniciamos una sesión limpia con el primer desarrollador utilizando el parámetro `-` (para cargar sus variables de entorno), nos desplazamos al directorio común y generamos un script de prueba mediante la **redirección de salida (`>`)**:
+
+```bash
+su - dev-01
+cd /srv/desarrollo
+echo "print('Hola desde el equipo de dev')" > app.py
+ls -l app.py
+exit
+```
+
+
+*Nota técnica: El operador `>` toma la salida del comando `echo` y la inyecta directamente creando el archivo `app.py`. Al ejecutar `ls -l`, se puede validar el impacto del hardening: el archivo pertenece al usuario `dev-01` pero hereda de forma automática el grupo propietario `desarrollo` debido al bit SGID.*
+
+<br>
+<img src="../docs/img/usuario12.png" alt="Verificación de creación de archivo con SGID" width="700">
+<br>
+
+### Paso 2: Modificación colaborativa con `dev-02`
+
+Para cerrar el ciclo de validación, iniciamos sesión con el segundo desarrollador y alteramos el script de su compañero utilizando el operador seguro de anexado (`>>`) para evitar sobrescribir el código previo:
+
+```bash
+su - dev-02
+cd /srv/desarrollo
+echo "# Modificado por dev-02 para pruebas" >> app.py
+cat app.py
+exit
+```
+
+*El sistema procesa la edición de forma transparente y fluida sin solicitar elevación de privilegios, confirmando el éxito definitivo de la configuración de permisos `2770`.*
+
+<br>
+<img src="../docs/img/usuario13.png" alt="Modificación exitosa por segundo usuario" width="700">
+<br>
+
