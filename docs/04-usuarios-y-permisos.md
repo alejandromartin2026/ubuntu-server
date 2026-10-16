@@ -273,3 +273,37 @@ exit
 <img src="../docs/img/usuario13.png" alt="Modificación exitosa por segundo usuario" width="700">
 <br>
 
+## Hardening de Contraseñas y Caducidad de Cuentas (`chage`)
+
+Para dar por concluido el módulo de hardening en la gestión de usuarios, implementamos una política de rotación y envejecimiento de credenciales sobre las cuentas locales utilizando la herramienta nativa **`chage`** (*Change Age*). 
+
+En un entorno corporativo real, dejar contraseñas activas de forma indefinida representa un riesgo crítico de seguridad (por ejemplo, ante la desvinculación de personal o el compromiso latente de una estación de trabajo). 
+
+### Objetivos de Seguridad Aplicados (El Porqué):
+1. **Forzar el cambio en el primer inicio (`-d 0`):** El SysAdmin asigna una clave temporal para la creación de la cuenta, pero el sistema obliga al usuario a generar su propia frase de contraseña privada en su primer login. Esto evita que el administrador conozca las credenciales definitivas del personal operativo y garantiza el principio de no repudio.
+2. **Rotación obligatoria cada 90 días (`-M 90`):** Mitiga el riesgo de ataques de fuerza bruta por diccionario a largo plazo y reduce la ventana de oportunidad si una credencial llega a filtrarse de forma silenciosa.
+3. **Periodo de advertencia preventiva (`-W 7`):** Avisa diariamente al desarrollador una semana antes del vencimiento. Esto previene interrupciones accidentales en el flujo de trabajo del equipo por bloqueos de cuenta imprevistos.
+
+### Ejecución de la Política
+
+Optimizamos el despliegue combinando todos los parámetros requeridos en una sola línea de comandos para cada uno de los desarrolladores:
+
+```bash
+sudo chage -d 0 -M 90 -W 7 dev-01
+sudo chage -d 0 -M 90 -W 7 dev-02
+sudo chage -d 0 -M 90 -W 7 dev-03
+```
+
+### Auditoría y Verificación de los Límites Temporales
+
+Para validar que las directivas impactaron de forma rigurosa en el sistema operativo, listamos la configuración de envejecimiento de la cuenta objetivo con el parámetro `-l`:
+
+```bash
+sudo chage -l dev-01
+```
+
+<br>
+<img src="../docs/img/usuario14.png" alt="Configuración de políticas con chage y auditoría de tiempos" width="700">
+<br>
+
+*Como se aprecia en la captura de auditoría, las primeras tres líneas del reporte bloquean el uso de la credencial actual exigiendo su renovación inmediata (`password must be changed`), mientras que la base de tiempos refleja con total precisión los máximos y avisos configurados.*
