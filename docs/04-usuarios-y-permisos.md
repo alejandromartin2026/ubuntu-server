@@ -303,7 +303,76 @@ sudo chage -l dev-01
 ```
 
 <br>
-<img src="../docs/img/usuario14.png" alt="Configuración de políticas con chage y auditoría de tiempos" width="700">
+<img src="../docs/img/usuario14.png" alt="Configuración de políticas con chage y auditoría de tiempos" width="1000">
 <br>
 
 *Como se aprecia en la captura de auditoría, las primeras tres líneas del reporte bloquean el uso de la credencial actual exigiendo su renovación inmediata (`password must be changed`), mientras que la base de tiempos refleja con total precisión los máximos y avisos configurados.*
+
+## Despliegue de Acceso Criptográfico e Integración de Políticas (Hardening SSH)
+
+En servidores de producción donde se ha deshabilitado por completo la autenticación tradicional por contraseñas, la inyección de llaves públicas debe ser gestionada de manera rigurosa por el Administrador del Sistema, ya que los usuarios operativos (como el equipo de desarrollo) carecen de privilegios de elevación (`sudo`).
+
+A continuación, se documenta el procedimiento técnico realizado desde la cuenta de administración para configurar el acceso remoto seguro del usuario **dev-01**.
+
+### Paso 1: Preparación del Entorno e Inyección de la Llave Pública
+
+Para evitar conflictos de redirección en la shell del operador principal, ejecutamos el comando `mkdir` con el flag `-p` para asegurar la ruta e invocamos una sub-shell de root mediante `sudo bash -c` para inyectar limpiamente la cadena de texto criptográfica (tipo `ssh-ed25519`) directamente en el archivo de llaves autorizadas del desarrollador:
+
+```bash
+sudo mkdir -p /home/dev-01/.ssh
+sudo bash -c 'echo ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEcCAkdSFKN5pdVSB2TP/BJ83UE015jraZC03BmTC6eC dev-01-lab >> /home/dev-01/.ssh/authorized_keys'
+```
+
+<br>
+<img src="../docs/img/usuario15.png" alt="Inyección criptográfica con Bash de Root" width="1100">
+<br>
+
+### Paso 2: Aislamiento y Hardening de Permisos sobre el Directorio SSH
+
+El demonio de SSH (`sshd`) rechazará de manera automática cualquier intento de autenticación si los archivos de configuración poseen permisos de lectura o escritura abiertos a terceros. Aplicamos políticas estrictas de aislamiento sobre la ruta absoluta del sistema de archivos:
+
+```bash
+# Otorgar acceso exclusivo de lectura/escritura/ejecución al dueño sobre el directorio
+sudo chmod 700 /home/dev-01/.ssh
+
+# Otorgar acceso exclusivo de lectura/escritura al dueño sobre el archivo de llaves
+sudo chmod 600 /home/dev-01/.ssh/authorized_keys
+```
+
+<br>
+<img src="../docs/img/usuario16.png" alt="Aplicación de permisos 700 y 600" width="1100">
+<br>
+
+### Paso 3: Corrección de la Propiedad del Archivo (`chown`)
+
+Dado que el directorio y su contenido fueron creados inicialmente por el superusuario `root`, debemos transferir la propiedad de forma recursiva (`-R`) a su verdadero dueño operativo, asegurando que coincidan tanto el usuario como el grupo correspondiente:
+
+```bash
+sudo chown -R dev-01:dev-01 /home/dev-01/.ssh
+```
+
+<br>
+<img src="../docs/img/usuario17.png" alt="Cambio de propietario exitoso a dev-01" width="1100">
+<br>
+
+### Paso 4:  - Validación Remota con Hardening de Contraseña Activo
+
+Para comprobar la robustez global del servidor, realizamos el login remoto desde la máquina cliente externa especificando la llave privada de identidad (`-i`) y el puerto personalizado del servicio (`-p 2232`):
+
+```bash
+ssh -p 2232 -i ~/.ssh/id_dev-01 dev-01@10.0.2.4
+```
+
+#### Comportamiento Esperado del Sistema:
+Como se aprecia en el resultado del laboratorio, **el servidor valida satisfactoriamente la firma criptográfica sin solicitar credenciales intermedias**, permitiendo saltar de forma exitosa las barreras de Fail2Ban. Sin embargo, en el milisegundo en que se abre la sesión, la directiva de envejecimiento forzado configurada anteriormente intercepta al usuario exigiéndole cambiar su contraseña local antes de concederle el control de la shell (`You are required to change your password immediately`).
+
+<br>
+<img src="../docs/img/usuario18.png" alt="Login criptográfico exitoso y renovación forzada" width="1000">
+<br>
+
+<br>
+<img src="../docs/img/usuario19.png" alt="Login criptográfico exitoso y renovación forzada" width="1000">
+<br>
+
+> ⚠️ **NOTA CRÍTICA DE LABORATORIO (Continúa en la sección de Troubleshooting):** 
+> Al intentar operar normalmente con el usuario `dev-01` tras este paso, se detectó un bloqueo perimetral debido al cruce de nuestras políticas de seguridad. Como deshabilitamos el acceso SSH por contraseña pero dejamos el flag de cambio obligatorio activo, el sistema expulsa al usuario en un bucle. A continuación, se detalla el porqué técnico y cómo lo resolvi desde la cuenta de administración.
