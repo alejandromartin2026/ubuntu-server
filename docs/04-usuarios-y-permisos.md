@@ -376,3 +376,26 @@ Como se aprecia en el resultado del laboratorio, **el servidor valida satisfacto
 
 > ⚠️ **NOTA CRÍTICA DE LABORATORIO (Continúa en la sección de Troubleshooting):** 
 > Al intentar operar normalmente con el usuario `dev-01` tras este paso, se detectó un bloqueo perimetral debido al cruce de nuestras políticas de seguridad. Como deshabilitamos el acceso SSH por contraseña pero dejamos el flag de cambio obligatorio activo, el sistema expulsa al usuario en un bucle. A continuación, se detalla el porqué técnico y cómo lo resolvi desde la cuenta de administración.
+
+## Protocolo de Bloqueo Preventivo de usuario en Tres Capas
+
+Ante un incidente de seguridad, una suspensión preventiva requiere un enfoque multifactorial. No basta con bloquear la contraseña local, ya que los accesos criptográficos (SSH), las sesiones concurrentes activas y los procesos automatizados en segundo plano podrían mantener una brecha abierta.
+
+Ejecutamos el protocolo de aislamiento completo desde la consola de administración:
+
+```bash
+# Capa 1: Invalida la clave local y fuerza la expiración inmediata de la cuenta (Corta SSH y logins futuros)
+sudo usermod -L -e 2026-11-02 dev-03
+
+# Capa 2: Expulsión inmediata del sistema (Mata todas las sesiones SSH y procesos activos actuales)
+sudo pkill -9 -u dev-03
+
+# Capa 3: Remoción de persistencia (Elimina cualquier script o tarea programada en el crontab del usuario)
+sudo crontab -u dev-03 -r
+```
+
+*Nota de Hardening: Este flujo garantiza que el vector quede completamente mitigado en el acto, neutralizando sesiones activas previas y automatizaciones ocultas, mientras se preserva la integridad de los archivos del directorio del usuario para posteriores análisis forenses.*
+
+<br>
+<img src="../docs/img/usuario20.png" alt="Protocolo completo de bloqueo preventivo de tres capas" width="700">
+<br>
