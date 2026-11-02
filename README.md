@@ -24,7 +24,7 @@ Este repositorio es mi laboratorio activo de estudio. El contenido se irá subie
     *   `01-instalacion.md` ✅ Completo
     *   `02-conexion-ssh.md` ✅ Completo 
     *   `03-netplan-firewall-fail2ban.md` ✅ Completo
-    *   `04-usuarios-y-permisos.md` 🛠️ En curso
+    *   `04-usuarios-y-permisos.md` ✅ Completo
     *   `05-instalacion-y-configuracion-docker.md` 🛠️ En curso 
 *   `/troubleshooting`: Guía sobre la resolución de problemas.
     *   `01-recuperacion-de-contraseña-grub.md`

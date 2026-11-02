@@ -399,3 +399,20 @@ sudo crontab -u dev-03 -r
 <br>
 <img src="../docs/img/usuario20.png" alt="Protocolo completo de bloqueo preventivo de tres capas" width="700">
 <br>
+
+
+## Eliminación Definitiva de Cuentas (`userdel -r`)
+
+Una vez concluido el periodo de suspensión preventiva, realizadas las auditorías forenses pertinentes y respaldada la información crítica del colaborador, procedemos a la baja absoluta y definitiva del usuario en el sistema operativo:
+
+```bash
+sudo userdel -r dev-03
+```
+
+**Impacto de la directiva de hardening `-r`:**
+* El sistema purga de forma atómica el registro del usuario en los archivos de configuración centralizados (`/etc/passwd`, `/etc/shadow` y `/etc/group`).
+* Borra por completo su directorio personal hogareño (`/home/dev-03`), garantizando que no queden carpetas residuales ni permisos huérfanos en el almacenamiento del servidor que puedan ser explotados en el futuro.
+
+<br>
+<img src="../docs/img/usuario21.png" alt="Eliminación completa de usuario y su home con userdel -r" width="700">
+<br>
