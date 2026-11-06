@@ -71,3 +71,9 @@ EOF
 <br>
 <img src="../docs/img/docker4.png" alt="Inyección exitosa del repositorio docker.sources" width="900">
 <br>
+
+**Desglose técnico de la arquitectura del repositorio:**
+*   **`sudo tee /etc/apt/sources.list.d/docker.sources`**: Crea y escribe un archivo de fuentes bajo el nuevo estándar estricto de APT (formato `.sources` descriptivo de múltiples líneas) en lugar de las viejas líneas simples de herencia de Debian.
+*   **`Suites: \$(...)`**: Una función nativa que lee dinámicamente la variable interna del servidor para determinar de forma automática el nombre clave de tu versión de Ubuntu (en este caso, detectando con éxito la base **Noble** de Ubuntu 24.04 LTS).
+*   **`Architectures: \$(...)`**: Ejecuta el binario de bajo nivel `dpkg` para inyectar automáticamente tu tipo de arquitectura de procesador (**amd64**), evitando desajustes por hardware.
+*   **`Signed-By`**: Enlaza de forma obligatoria el repositorio con la llave `docker.asc` generada en el paso anterior. Si un atacante intentara falsificar los paquetes en la red, el gestor `apt` los rechazará inmediatamente por falta de firma coincidente.
