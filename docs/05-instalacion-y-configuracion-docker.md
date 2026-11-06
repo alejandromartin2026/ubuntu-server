@@ -10,7 +10,7 @@ Como primera medida de hardening, es indispensable asegurar que el sistema opera
 Ejecutamos el comando de remoción masiva en el servidor:
 
 ```bash
-sudo apt remove \$(dpkg --get-selections docker.io docker-compose docker-compose-v2 docker-doc docker-buildx podman-docker containerd runc | cut -f1)
+sudo apt remove $(dpkg --get-selections docker.io docker-compose docker-compose-v2 docker-doc docker-buildx podman-docker containerd runc | cut -f1)
 ```
 
 <br>
@@ -52,3 +52,22 @@ sudo chmod a+r /etc/apt/keyrings/docker.asc
 *   **`docker.asc`**: Es la llave criptográfica oficial en formato de texto claro firmado.
 *   **`chmod a+r`**: Le otorga permisos de lectura a todos los usuarios del sistema (`all + read`) única y exclusivamente sobre el archivo de la llave, permitiendo que el gestor `apt` pueda leer la firma para validar los paquetes, pero impidiendo cualquier tipo de alteración o modificación maliciosa.
 
+#### Paso 4: Configuración del Repositorio de Fuentes Oficial mediante Bloque Unificado.
+Con la llave criptográfica ya instalada en el sistema, procedemos a dar de alta el repositorio oficial. Para evitar la edición manual con editores de texto y garantizar la automatización limpia en lote, implementamos una estructura de inyección unificada  (`<<EOF`).
+
+Copiamos y ejecutamos todo el bloque integrado en la terminal:
+
+```bash
+sudo tee /etc/apt/sources.list.d/docker.sources <<EOF
+Types: deb
+URIs: https://download.docker.com/linux/ubuntu
+Suites: $(. /etc/os-release && echo "${UBUNTU_CODENAME:-$VERSION_CODENAME}")
+Components: stable
+Architectures: $(dpkg --print-architecture)
+Signed-By: /etc/apt/keyrings/docker.asc
+EOF
+```
+
+<br>
+<img src="../docs/img/docker4.png" alt="Inyección exitosa del repositorio docker.sources" width="900">
+<br>
