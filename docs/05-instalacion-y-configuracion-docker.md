@@ -77,3 +77,18 @@ EOF
 *   **`Suites: \$(...)`**: Una función nativa que lee dinámicamente la variable interna del servidor para determinar de forma automática el nombre clave de tu versión de Ubuntu (en este caso, detectando con éxito la base **Noble** de Ubuntu 24.04 LTS).
 *   **`Architectures: \$(...)`**: Ejecuta el binario de bajo nivel `dpkg` para inyectar automáticamente tu tipo de arquitectura de procesador (**amd64**), evitando desajustes por hardware.
 *   **`Signed-By`**: Enlaza de forma obligatoria el repositorio con la llave `docker.asc` generada en el paso anterior. Si un atacante intentara falsificar los paquetes en la red, el gestor `apt` los rechazará inmediatamente por falta de firma coincidente.
+
+#### Paso 5: Sincronización e Instalación del Motor Oficial (Docker Engine)
+Con el origen de software blindado y autenticado bajo el nuevo archivo `.sources`, ordenamos al gestor de paquetes actualizar sus índices locales de repositorios e instalar de forma directa la suite oficial de componentes de Docker:
+
+```bash
+# Sincronizar la base de datos de paquetes con las nuevas fuentes seguras
+sudo apt update
+
+# Instalar los binarios esenciales oficiales y complementos de despliegue
+sudo apt install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+```
+
+<br>
+<img src="../docs/img/docker5.png" alt="Instalación exitosa de los binarios oficiales de Docker" width="1100">
+<br>
