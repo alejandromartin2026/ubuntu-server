@@ -92,3 +92,24 @@ sudo apt install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin d
 <br>
 <img src="../docs/img/docker5.png" alt="Instalación exitosa de los binarios oficiales de Docker" width="1100">
 <br>
+
+#### Paso 6: Auditoría del Servicio de Sistema y Prueba de Diagnóstico Aislada
+Para dar por concluido el despliegue del entorno de contenedores, procedemos a realizar un control cruzado del estado del proceso en segundo plano administrado por `systemd` e inicializamos el contenedor de pruebas mandatorio:
+
+```bash
+# Validar que el demonio de Docker esté activo y corriendo de forma saludable
+sudo systemctl status docker
+
+# Desplegar la imagen de diagnóstico oficial desde el registro central seguro
+sudo docker run hello-world
+```
+
+<br>
+<img src="../docs/img/docker6.png" alt="Servicio Docker activo y en ejecución" width="700">
+<br>
+
+<br>
+<img src="../docs/img/docker7.png" alt="Ejecución exitosa del contenedor hello-world" width="700">
+<br>
+
+*Análisis final del flujo de diagnóstico: El mensaje inicial "Unable to find image locally" refleja el comportamiento nativo esperado de la arquitectura del motor. Este realiza una indexación en el disco local y, al constatar la ausencia del objeto, descarga de forma cifrada los hashes de las capas correspondientes de la aplicación, imprimiendo exitosamente el saludo "Hello from Docker!" que ratifica la integridad funcional y de red de nuestro Server Lab.*
